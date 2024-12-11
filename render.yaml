@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: debate-platform
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: COHERE_API_KEY
+        sync: false
+      - key: PORT
+        value: 10000 

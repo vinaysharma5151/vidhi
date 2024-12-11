@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debate Platform - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .name-input {
+            transition: all 0.3s ease;
+        }
+        .name-input:focus {
+            transform: translateY(-2px);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234b5563' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="hero-pattern">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <div class="inline-block mb-4 px-6 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
+                Welcome to the Future of Debates
+            </div>
+            <h1 class="text-5xl font-bold text-gray-800 mb-6 leading-tight">
+                Engage in Meaningful <span class="text-blue-600">Discussions</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Join our platform for structured debates, real-time fact-checking, and collaborative learning
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Name Input Section -->
+            <div class="glass-effect p-8 rounded-2xl shadow-xl mb-12">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+                    <i class="fas fa-user-circle text-blue-500"></i>
+                    Get Started
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="fullName" 
+                            class="name-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter your full name">
+                    </div>
+                    <div>
+                        <label for="uniqueName" class="block text-sm font-medium text-gray-700 mb-2">Unique Username</label>
+                        <input type="text" id="uniqueName" 
+                            class="name-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Choose a unique username">
+                        <p class="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            This will be your identifier during debates
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="feature-card glass-effect p-6 rounded-2xl shadow-lg">
+                    <div class="text-blue-500 text-3xl mb-4 bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Real-time Discussions</h3>
+                    <p class="text-gray-600">Engage in live debates with participants from around the world</p>
+                </div>
+
+                <div class="feature-card glass-effect p-6 rounded-2xl shadow-lg">
+                    <div class="text-green-500 text-3xl mb-4 bg-green-50 w-14 h-14 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">AI Fact Checking</h3>
+                    <p class="text-gray-600">Get instant verification of claims using advanced AI technology</p>
+                </div>
+
+                <div class="feature-card glass-effect p-6 rounded-2xl shadow-lg">
+                    <div class="text-purple-500 text-3xl mb-4 bg-purple-50 w-14 h-14 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Team Collaboration</h3>
+                    <p class="text-gray-600">Work together with your team to present compelling arguments</p>
+                </div>
+
+                <div class="feature-card glass-effect p-6 rounded-2xl shadow-lg">
+                    <div class="text-yellow-500 text-3xl mb-4 bg-yellow-50 w-14 h-14 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Point System</h3>
+                    <p class="text-gray-600">Earn points for valid arguments and successful rebuttals</p>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center">
+                <button onclick="startDebating()"
+                    class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition-colors text-lg font-medium shadow-lg hover:shadow-xl">
+                    <span>Start Debating</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-24 text-center text-gray-600">
+            <p class="text-sm">&copy; 2024 Debate Platform. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        function startDebating() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const uniqueName = document.getElementById('uniqueName').value.trim();
+
+            if (!fullName || !uniqueName) {
+                alert('Please enter both your full name and unique username.');
+                return;
+            }
+
+            // Store user information in localStorage
+            localStorage.setItem('fullName', fullName);
+            localStorage.setItem('username', uniqueName);
+
+            // Redirect to debate setup page
+            window.location.href = 'debate%202.html';
+        }
+
+        // Check if user already has stored information
+        window.onload = function() {
+            const storedFullName = localStorage.getItem('fullName');
+            const storedUsername = localStorage.getItem('username');
+
+            if (storedFullName && storedUsername) {
+                document.getElementById('fullName').value = storedFullName;
+                document.getElementById('uniqueName').value = storedUsername;
+            }
+        }
+    </script>
+</body>
+</html>

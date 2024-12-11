@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debate Platform Setup</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .language-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="language-toggle">
+        <button 
+            id="languageToggle" 
+            class="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+        >
+            <span class="text-xl">🌐</span>
+            <span id="languageText">हिंदी</span>
+        </button>
+    </div>
+    <div id="root"></div>
+    <script type="text/babel">
+        function App() {
+            const [isHost, setIsHost] = React.useState(null);
+            const [topic, setTopic] = React.useState('');
+            const [team1, setTeam1] = React.useState('');
+            const [team2, setTeam2] = React.useState('');
+            const [team1Position, setTeam1Position] = React.useState('for');
+            const [team2Position, setTeam2Position] = React.useState('against');
+            const [linkGenerated, setLinkGenerated] = React.useState(false);
+            const [link, setLink] = React.useState('');
+            const [memberLink, setMemberLink] = React.useState('');
+            const [joined, setJoined] = React.useState(false);
+            const [teamChoice, setTeamChoice] = React.useState('');
+            const [messages, setMessages] = React.useState([]);
+            const [message, setMessage] = React.useState('');
+            const [recording, setRecording] = React.useState(false);
+            const [points, setPoints] = React.useState({ team1: 0, team2: 0 });
+
+            const handleHostClick = () => {
+                setIsHost(true);
+            };
+
+            const handleMemberClick = () => {
+                setIsHost(false);
+            };
+
+            const handleBackClick = () => {
+                setIsHost(null);
+                setLinkGenerated(false);
+                setLink('');
+                setMemberLink('');
+                setJoined(false);
+                setTeamChoice('');
+            };
+
+            const handleTeam1PositionChange = (position) => {
+                setTeam1Position(position);
+                setTeam2Position(position === 'for' ? 'against' : 'for');
+            };
+
+            const handleTeam2PositionChange = (position) => {
+                setTeam2Position(position);
+                setTeam1Position(position === 'for' ? 'against' : 'for');
+            };
+
+            const handleSave = () => {
+                const generatedLink = `https://example.com/debate?topic=${encodeURIComponent(topic)}&team1=${encodeURIComponent(team1)}&team2=${encodeURIComponent(team2)}&team1Position=${team1Position}&team2Position=${team2Position}`;
+                setLink(generatedLink);
+                setLinkGenerated(true);
+            };
+
+            const handleCopyLink = () => {
+                navigator.clipboard.writeText(link);
+                alert('Link copied to clipboard!');
+            };
+
+            const handleJoinRoom = () => {
+                if (memberLink) {
+                    const urlParams = new URLSearchParams(new URL(memberLink).search);
+                    setTopic(urlParams.get('topic'));
+                    setTeam1(urlParams.get('team1'));
+                    setTeam2(urlParams.get('team2'));
+                    setTeam1Position(urlParams.get('team1Position'));
+                    setTeam2Position(urlParams.get('team2Position'));
+                    setJoined(true);
+                } else {
+                    alert('Please paste a valid link.');
+                }
+            };
+
+            const handleTeamChoice = (team) => {
+                setTeamChoice(team);
+                // Store team info in localStorage before redirecting
+                localStorage.setItem('debateTeam', team);
+                localStorage.setItem('debateTopic', topic);
+                localStorage.setItem('team1Name', team1);
+                localStorage.setItem('team2Name', team2);
+                localStorage.setItem('team1Position', team1Position);
+                localStorage.setItem('team2Position', team2Position);
+                
+                // Alert and redirect
+                alert(`You have joined ${team === 'team1' ? team1 : team2}`);
+                window.location.href = 'main.html';
+            };
+
+            const handleSendMessage = () => {
+                if (message.trim()) {
+                    const newMessage = {
+                        text: message,
+                        team: teamChoice,
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    setMessages([...messages, newMessage]);
+                    setMessage('');
+                    // AI logic to give points
+                    if (teamChoice === 'team1') {
+                        setPoints({ ...points, team1: points.team1 + 1 });
+                    } else {
+                        setPoints({ ...points, team2: points.team2 + 1 });
+                    }
+                }
+            };
+
+            const handleRecordVoice = () => {
+                setRecording(!recording);
+                // Implement voice recording logic here
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-8 relative">
+                        {/* Back Button */}
+                        {isHost !== null && (
+                            <button 
+                                onClick={handleBackClick}
+                                className="absolute top-4 left-4 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
+                            >
+                                <i className="fas fa-arrow-left"></i>
+                                <span>Back</span>
+                            </button>
+                        )}
+
+                        {/* Initial Host/Member Selection */}
+                        {isHost === null ? (
+                            <div className="text-center">
+                                <h1 className="text-3xl font-bold text-gray-800 mb-8">Welcome to Debate Platform</h1>
+                                <p className="text-gray-600 mb-8">Choose your role to get started</p>
+                                <div className="flex justify-center gap-6">
+                                    <button
+                                        onClick={handleHostClick}
+                                        className="flex flex-col items-center gap-4 p-6 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors group"
+                                    >
+                                        <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center group-hover:bg-blue-600">
+                                            <i className="fas fa-user-tie text-2xl"></i>
+                                        </div>
+                                        <span className="font-medium text-blue-800">Host</span>
+                                    </button>
+                                    <button
+                                        onClick={handleMemberClick}
+                                        className="flex flex-col items-center gap-4 p-6 bg-green-50 rounded-xl hover:bg-green-100 transition-colors group"
+                                    >
+                                        <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center group-hover:bg-green-600">
+                                            <i className="fas fa-users text-2xl"></i>
+                                        </div>
+                                        <span className="font-medium text-green-800">Member</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ) : isHost ? (
+                            /* Host Setup Form */
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Debate Setup</h2>
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Topic of Debate</label>
+                                        <div className="relative">
+                                            <select
+                                                value={topic}
+                                                onChange={(e) => setTopic(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                                            >
+                                                <option value="">Select or type a topic...</option>
+                                                <optgroup label="Technology & AI">
+                                                    <option value="Should AI be regulated?">Should AI be regulated?</option>
+                                                    <option value="Is social media beneficial for society?">Is social media beneficial for society?</option>
+                                                    <option value="Should cryptocurrency be globally adopted?">Should cryptocurrency be globally adopted?</option>
+                                                    <option value="Does technology increase inequality?">Does technology increase inequality?</option>
+                                                </optgroup>
+                                                <optgroup label="Environment & Climate">
+                                                    <option value="Should nuclear energy be expanded?">Should nuclear energy be expanded?</option>
+                                                    <option value="Should carbon tax be mandatory?">Should carbon tax be mandatory?</option>
+                                                    <option value="Is lab-grown meat the future?">Is lab-grown meat the future?</option>
+                                                    <option value="Should private cars be banned in cities?">Should private cars be banned in cities?</option>
+                                                </optgroup>
+                                                <optgroup label="Society & Politics">
+                                                    <option value="Should voting be mandatory?">Should voting be mandatory?</option>
+                                                    <option value="Is universal basic income necessary?">Is universal basic income necessary?</option>
+                                                    <option value="Should education be free?">Should education be free?</option>
+                                                    <option value="Should healthcare be universal?">Should healthcare be universal?</option>
+                                                </optgroup>
+                                                <optgroup label="Ethics & Philosophy">
+                                                    <option value="Is human enhancement ethical?">Is human enhancement ethical?</option>
+                                                    <option value="Should euthanasia be legal?">Should euthanasia be legal?</option>
+                                                    <option value="Does free will exist?">Does free will exist?</option>
+                                                    <option value="Is privacy a fundamental right?">Is privacy a fundamental right?</option>
+                                                </optgroup>
+                                            </select>
+                                            <input
+                                                type="text"
+                                                value={topic}
+                                                onChange={(e) => setTopic(e.target.value)}
+                                                placeholder="Or type your own topic..."
+                                                className="mt-2 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Team 1 Name</label>
+                                            <input
+                                                type="text"
+                                                value={team1}
+                                                onChange={(e) => setTeam1(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Enter team 1 name"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Team 2 Name</label>
+                                            <input
+                                                type="text"
+                                                value={team2}
+                                                onChange={(e) => setTeam2(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Enter team 2 name"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Team 1 Position</label>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleTeam1PositionChange('for')}
+                                                    className={`flex-1 py-2 px-4 rounded-lg ${
+                                                        team1Position === 'for' 
+                                                            ? 'bg-blue-500 text-white' 
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                                >
+                                                    For
+                                                </button>
+                                                <button
+                                                    onClick={() => handleTeam1PositionChange('against')}
+                                                    className={`flex-1 py-2 px-4 rounded-lg ${
+                                                        team1Position === 'against' 
+                                                            ? 'bg-blue-500 text-white' 
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                                >
+                                                    Against
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Team 2 Position</label>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleTeam2PositionChange('for')}
+                                                    className={`flex-1 py-2 px-4 rounded-lg ${
+                                                        team2Position === 'for' 
+                                                            ? 'bg-blue-500 text-white' 
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                                >
+                                                    For
+                                                </button>
+                                                <button
+                                                    onClick={() => handleTeam2PositionChange('against')}
+                                                    className={`flex-1 py-2 px-4 rounded-lg ${
+                                                        team2Position === 'against' 
+                                                            ? 'bg-blue-500 text-white' 
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                                >
+                                                    Against
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handleSave}
+                                        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                                    >
+                                        Generate Debate Link
+                                    </button>
+
+                                    {linkGenerated && (
+                                        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Share this link with participants</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={link}
+                                                    readOnly
+                                                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white"
+                                                />
+                                                <button
+                                                    onClick={handleCopyLink}
+                                                    className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                                                >
+                                                    <i className="fas fa-copy mr-2"></i>
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : !joined ? (
+                            /* Member Join Form */
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Join Debate</h2>
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Debate Link</label>
+                                        <input
+                                            type="text"
+                                            value={memberLink}
+                                            onChange={(e) => setMemberLink(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Paste the debate link here"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleJoinRoom}
+                                        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                                    >
+                                        Join Debate
+                                    </button>
+                                </div>
+                            </div>
+                        ) : !teamChoice ? (
+                            /* Team Selection */
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Choose Your Team</h2>
+                                <div className="space-y-6">
+                                    <div className="p-4 bg-gray-50 rounded-lg">
+                                        <h3 className="font-medium text-gray-700 mb-2">Debate Topic</h3>
+                                        <p className="text-gray-900">{topic}</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <button
+                                            onClick={() => handleTeamChoice('team1')}
+                                            className="p-6 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors text-center"
+                                        >
+                                            <div className="font-medium text-blue-800 mb-2">{team1}</div>
+                                            <div className="text-sm text-blue-600">{team1Position}</div>
+                                        </button>
+                                        <button
+                                            onClick={() => handleTeamChoice('team2')}
+                                            className="p-6 bg-green-50 rounded-xl hover:bg-green-100 transition-colors text-center"
+                                        >
+                                            <div className="font-medium text-green-800 mb-2">{team2}</div>
+                                            <div className="text-sm text-green-600">{team2Position}</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
